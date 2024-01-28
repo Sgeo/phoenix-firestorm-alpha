@@ -88,6 +88,11 @@
 #include "llpresetsmanager.h"
 #include "fsdata.h"
 
+//################################### P373R ######################################
+#include "llviewerVR.cpp"
+llviewerVR gVR;
+//################################### END P373R ##################################
+
 extern LLPointer<LLViewerTexture> gStartTexture;
 extern bool gShiftFrame;
 
@@ -783,6 +788,12 @@ void display(BOOL rebuild, F32 zoom_factor, int subfield, BOOL for_snapshot)
 			gPipeline.toggleRenderType(LLPipeline::RENDER_TYPE_HUD_PARTICLES);
 		}
 
+		//################################### P373R ######################################
+		gVR.swapScreenAndEye(1);
+		sec:
+		gVR.ProcessVRCamera();
+		//################################### END P373R ##################################
+
 		stop_glerror();
 		display_update_camera();
 		stop_glerror();
@@ -1118,7 +1129,29 @@ void display(BOOL rebuild, F32 zoom_factor, int subfield, BOOL for_snapshot)
 		if (!for_snapshot)
 		{
 			render_ui();
-			swap();
+			//################################### P373R ######################################
+			
+			gVR.swapScreenAndEye(0);
+			gVR.vrDisplay();
+			//swap();
+			if (gVR.leftEyeDesc.IsReady  && !gVR.rightEyeDesc.IsReady)
+			{
+				gVR.swapScreenAndEye(2);
+				goto sec;
+
+
+			}
+
+			if (!gVR.leftEyeDesc.IsReady  && !gVR.rightEyeDesc.IsReady)
+			{
+				//gVR.HandleInput();
+				
+
+			}
+			if (!gVR.m_bVrActive)
+				swap();
+
+			//################################### END P373R ##################################
 		}
 
 		
@@ -1661,6 +1694,9 @@ void render_ui_3d()
 	stop_glerror();
 	
 	gUIProgram.bind();
+	//################################### P373R ######################################
+	gVR.RenderControllerAxes();
+	//################################### END P373R ##################################
     gGL.color4f(1, 1, 1, 1);
 
 	// Coordinate axes
@@ -1688,6 +1724,18 @@ void render_ui_3d()
 
 void render_ui_2d()
 {
+	// P373R Sgeo
+	// LLRenderTarget *priorTarget = NULL;
+	// if (gVR.m_bVrActive)
+	// {
+	// 	//return;
+	// 	priorTarget = LLRenderTarget::getCurrentBoundTarget();
+	// 	if(priorTarget) priorTarget->flush();
+	// 	gPipeline.mUIScreen.bindTarget();
+	// 	gGL.setColorMask(true, true);
+	// 	glClear(GL_COLOR_BUFFER_BIT);
+	// }
+	// /P373R Sgeo
 	LLGLSUIDefault gls_ui;
 
 	/////////////////////////////////////////////////////////////
@@ -1813,6 +1861,37 @@ void render_ui_2d()
 		gViewerWindow->draw();
 	}
 
+		//################################### P373R ######################################
+	gVR.DrawCursors();
+	if(gVR.m_bVrActive) {
+		gPipeline.mRT->uiScreen.flush();
+
+		gPipeline.mRT->screen.bindTarget();
+		// gSplatTextureRectProgram.bind();
+		// gGL.getTexUnit(0)->bind(&gPipeline.mUIScreen);
+
+		// // S32 uiDepth = LLAppViewer::instance()->getRiftUIDepth();
+		// // S32 offset = (gRiftCurrentEye == 0) ? uiDepth + gRiftLensOffset : -uiDepth - gRiftLensOffset;
+		// S32 offset = 0;
+		// S32 width = gViewerWindow->getWindowWidthScaled();;
+		// S32 height = gViewerWindow->getWindowHeightScaled();
+		// LLGLEnable blend(GL_BLEND);
+		// gGL.setColorMask(true, false);
+		// gGL.color4f(1,1,1,1);
+		// gGL.begin(7);
+		// 	gGL.texCoord2f(0, height);		gGL.vertex2i(offset, height);
+		// 	gGL.texCoord2f(0, 0);			gGL.vertex2i(offset, 0);
+		// 	gGL.texCoord2f(width, 0);		gGL.vertex2i(offset + width, 0);
+		// 	gGL.texCoord2f(width, height);	gGL.vertex2i(offset + width, height);
+		// gGL.end();
+		// gGL.flush();
+
+		//gSplatTextureRectProgram.unbind();
+		gPipeline.mRT->screen.flush();
+		
+	}
+	//################################### END P373R ##################################
+
 
 
 	// reset current origin for font rendering, in case of tiling render
@@ -1898,6 +1977,9 @@ void render_disconnected_background()
 
 void display_cleanup()
 {
+	//################################### P373R ######################################
+		gVR.vrStartup(TRUE);
+	//################################### END P373R ######################################
 	gDisconnectedImagep = NULL;
 }
 

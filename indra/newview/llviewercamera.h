@@ -91,6 +91,13 @@ public:
     void setViewNoBroadcast(F32 vertical_fov_rads);  // set FOV without broadcasting to simulator (for temporary local cameras)
 	void setDefaultFOV(F32 fov) ;
 	F32 getDefaultFOV() { return mCameraFOVDefault; }
+	// P373R Sgeo
+	void setVRFov(F32 left, F32 right, F32 top, F32 bottom);
+	F32 getHorizontalOffset() const { return mHorizontalOffset; }
+	F32 getVerticalOffset() const { return mVerticalOffset; }
+	void setHorizontalOffset(F32 offset) { mHorizontalOffset = offset; }
+	void setVerticalOffset(F32 offset) { mVerticalOffset = offset; }
+	// END P373R Sgeo
 
 	BOOL isDefaultFOVChanged();
 
@@ -125,7 +132,14 @@ protected:
 	F32					mZoomFactor;
 	S16					mZoomSubregion;
 
+// P373R Sgeo
+private:
+	F32 mHorizontalOffset;
+	F32 mVerticalOffset;
+// END P373R Sgeo
+
 public:
+
 };
 
 

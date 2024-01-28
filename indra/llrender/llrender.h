@@ -564,6 +564,9 @@ void set_current_projection(glh::matrix4f& mat);
 
 glh::matrix4f gl_ortho(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat znear, GLfloat zfar);
 glh::matrix4f gl_perspective(GLfloat fovy, GLfloat aspect, GLfloat zNear, GLfloat zFar);
+// P373R Sgeo
+glh::matrix4f gl_perspective_vr(GLfloat fovy, GLfloat aspect, GLfloat zNear, GLfloat zFar, GLfloat hOffset, GLfloat vOffset);
+// END P373R Sgeo
 glh::matrix4f gl_lookat(LLVector3 eye, LLVector3 center, LLVector3 up);
 
 #define LL_SHADER_LOADING_WARNS(...) LL_WARNS()

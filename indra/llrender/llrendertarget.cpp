@@ -184,6 +184,12 @@ void LLRenderTarget::setColorAttachment(LLImageGL* img, LLGLuint use_name)
     glBindFramebuffer(GL_FRAMEBUFFER, sCurFBO);
 }
 
+// P373R Sgeo
+U32 LLRenderTarget::getFBO() {
+	return mFBO;
+}
+// END P373R Sgeo
+
 void LLRenderTarget::releaseColorAttachment()
 {
 	LL_PROFILE_ZONE_SCOPED_CATEGORY_PIPELINE;

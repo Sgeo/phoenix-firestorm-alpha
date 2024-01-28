@@ -876,7 +876,7 @@ bool LLPipeline::allocateScreenBuffer(U32 resX, U32 resY, U32 samples)
         mWaterDis.allocate(resX, resY, GL_RGBA, true);
     }
 
-	if (RenderUIBuffer)
+	if (true || RenderUIBuffer) // P373R Sgeo
 	{
 		if (!mRT->uiScreen.allocate(resX,resY, GL_RGBA))
 		{

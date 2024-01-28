@@ -2297,6 +2297,18 @@ glh::matrix4f gl_perspective(GLfloat fovy, GLfloat aspect, GLfloat zNear, GLfloa
 						 0, 0, -1.f, 0);
 }
 
+// P373R Sgeo
+glh::matrix4f gl_perspective_vr(GLfloat fovy, GLfloat aspect, GLfloat zNear, GLfloat zFar, GLfloat hOffset, GLfloat vOffset)
+{
+	GLfloat f = 1.f/tanf(DEG_TO_RAD*fovy/2.f);
+
+	return glh::matrix4f(f/aspect, 0, hOffset, 0,
+						 0, f, vOffset, 0,
+						 0, 0, (zFar+zNear)/(zNear-zFar), (2.f*zFar*zNear)/(zNear-zFar),
+						 0, 0, -1.f, 0);
+}
+// END P373R Sgeo
+
 glh::matrix4f gl_lookat(LLVector3 eye, LLVector3 center, LLVector3 up)
 {
 	LLVector3 f = center-eye;

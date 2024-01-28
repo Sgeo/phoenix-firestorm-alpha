@@ -96,6 +96,10 @@ LLViewerCamera::LLViewerCamera() : LLCamera()
 	mZoomSubregion = 1;
 	mAverageSpeed = 0.f;
 	mAverageAngularSpeed = 0.f;
+	// P373R Sgeo
+	mHorizontalOffset = 0.f;
+	mVerticalOffset = 0.f;
+	// END P373R Sgeo
 	gSavedSettings.getControl("CameraAngle")->getCommitSignal()->connect(boost::bind(&LLViewerCamera::updateCameraAngle, this, _2));
 }
 
@@ -184,6 +188,11 @@ void LLViewerCamera::calcProjection(const F32 far_distance) const
 	mProjectionMatrix.mMatrix[2][2] = (z_far + z_near)/(z_near - z_far);
 	mProjectionMatrix.mMatrix[3][2] = (2*z_far*z_near)/(z_near - z_far);
 	mProjectionMatrix.mMatrix[2][3] = -1;
+
+	// P373R Sgeo
+	mProjectionMatrix.mMatrix[2][0] = getHorizontalOffset();
+	mProjectionMatrix.mMatrix[2][1] = getVerticalOffset();
+	// END P373R Sgeo
 }
 
 // Sets up opengl state for 3D drawing.  If for selection, also
@@ -371,7 +380,9 @@ void LLViewerCamera::setPerspective(BOOL for_selection,
 
 	calcProjection(z_far); // Update the projection matrix cache
 
-	proj_mat *= gl_perspective(fov_y,aspect,z_near,z_far);
+	// P373R Sgeo, replaces non-VR version
+	proj_mat *= gl_perspective_vr(fov_y,aspect,z_near,z_far, getHorizontalOffset(), getVerticalOffset());
+	// END P373R Sgeo
 
 	gGL.loadMatrix(proj_mat.m);
 
@@ -877,6 +888,20 @@ void LLViewerCamera::setDefaultFOV(F32 vertical_fov_rads)
 	mCameraFOVDefault = vertical_fov_rads; 
 	mCosHalfCameraFOV = cosf(mCameraFOVDefault * 0.5f);
 }
+
+// P373R Sgeo
+// Takes tan angles. Provided directly from OpenVR
+// OpenXR provides angles instead. Convert to tan at callsite or here?
+void LLViewerCamera::setVRFov(F32 left, F32 right, F32 top, F32 bottom)
+{
+	setView(2 * std::atanf((top-bottom)/2.0));
+	setAspect((right-left)/(top-bottom));
+	setHorizontalOffset((right+left)/(right-left));
+	setVerticalOffset((top+bottom)/(top-bottom));
+	// Provide accurate frustum planes
+	calculateFrustumPlanes(left * getFar(), right * getFar(), top * getFar(), bottom * getFar());
+}
+// END P373R Sgeo
 
 BOOL LLViewerCamera::isDefaultFOVChanged()
 {

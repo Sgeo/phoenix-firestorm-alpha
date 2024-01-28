@@ -147,6 +147,10 @@ public:
 	U32 getTexture(U32 attachment = 0) const;
 	U32 getNumTextures() const;
 
+	// P373R Sgeo
+	U32 getFBO();
+	// END P373R Sgeo
+
 	U32 getDepth(void) const { return mDepth; }
 
 	void bindTexture(U32 index, S32 channel, LLTexUnit::eTextureFilterOptions filter_options = LLTexUnit::TFO_BILINEAR);
