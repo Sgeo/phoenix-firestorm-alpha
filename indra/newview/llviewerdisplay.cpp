@@ -789,7 +789,6 @@ void display(BOOL rebuild, F32 zoom_factor, int subfield, BOOL for_snapshot)
 		}
 
 		//################################### P373R ######################################
-		gVR.swapScreenAndEye(1);
 		sec:
 		gVR.ProcessVRCamera();
 		//################################### END P373R ##################################
@@ -1131,12 +1130,10 @@ void display(BOOL rebuild, F32 zoom_factor, int subfield, BOOL for_snapshot)
 			render_ui();
 			//################################### P373R ######################################
 			
-			gVR.swapScreenAndEye(0);
 			gVR.vrDisplay();
 			//swap();
 			if (gVR.leftEyeDesc.IsReady  && !gVR.rightEyeDesc.IsReady)
 			{
-				gVR.swapScreenAndEye(2);
 				goto sec;
 
 

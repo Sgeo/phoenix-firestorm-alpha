@@ -1182,12 +1182,13 @@ void llviewerVR::vrDisplay()
 				// 	tx += thirdx;
 				// }
 			}
+			glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+			glReadBuffer(GL_BACK);
 			
 		
 			//if left camera was active bind left eye buffer for drawing in to
 			if (!leftEyeDesc.IsReady)
 			{
-				glBindFramebuffer(GL_READ_FRAMEBUFFER, lEyeRenderTarget.getFBO());
 				glBindFramebuffer(GL_DRAW_FRAMEBUFFER, leftEyeDesc.mFBO);
 				if (m_iZoomIndex)
 					glClear(GL_COLOR_BUFFER_BIT);
@@ -1207,7 +1208,6 @@ void llviewerVR::vrDisplay()
 			}
 			if ((leftEyeDesc.IsReady && !rightEyeDesc.IsReady))//if right camera was active bind left eye buffer for drawing in to
 			{
-				glBindFramebuffer(GL_READ_FRAMEBUFFER, rEyeRenderTarget.getFBO());
 				glBindFramebuffer(GL_DRAW_FRAMEBUFFER, rightEyeDesc.mFBO);
 				if (m_iZoomIndex)
 					glClear(GL_COLOR_BUFFER_BIT);
